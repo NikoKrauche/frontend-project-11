@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/NikoKrauche/frontend-project-11/actions/workflows/hexlet-checks.yml/badge.svg)](https://github.com/NikoKrauche/frontend-project-11/actions/workflows/hexlet-check.yml)
+[![Build Status](https://github.com/NikoKrauche/frontend-project-11/workflows/hexlet-check/badge.svg)](https://github.com/NikoKrauche/frontend-project-11/actions)
 [![Code Climat](https://api.codeclimate.com/v1/badges/6e96a44c02478d16771a/maintainability)](https://codeclimate.com/github/NikoKrauche/frontend-project-11/maintainability)
 
 # Rss aggregator
