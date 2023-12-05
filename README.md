@@ -9,10 +9,11 @@
 make install
 ```
 
-## Run
+## Link to app
 
 ```sh
-make develop
+[![Web App](blob:https://vercel.com/87dbbee4-90b5-4795-b54f-3985f94c606f)](https://frontend-project-11-102dliga6-nikos-projects-b8059c69.vercel.app/)
+
 ```
 
 
