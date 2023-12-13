@@ -1,19 +1,41 @@
 import onChange from 'on-change';
 import * as yup from 'yup';
+import i18n from 'i18next';
+import resources from './locales/index.js';
 import render from './view.js';
 
-const validate = (url, exceptions) => {
-  const schema = yup.string().min(1).trim().url()
-    .notOneOf(exceptions);
+const validate = (url, subscriptions) => {
+  yup.setLocale({
+    mixed: {
+      notOneOf: 'alreadyExists',
+    },
+    string: {
+      url: 'notValid',
+      min: 'notValid',
+    },
+  });
+
+  const schema = yup
+    .string()
+    .min(1)
+    .trim()
+    .url()
+    .notOneOf(subscriptions);
   return schema.validate(url);
 };
 
 export default () => {
+  i18n.init({
+    lng: 'ru',
+    debug: false,
+    resources,
+  });
+
   const state = {
     form: {
-      valid: '',
+      valid: true,
     },
-    listSite: [],
+    subscriptions: [],
     error: '',
   };
 
@@ -23,19 +45,18 @@ export default () => {
     feedback: document.querySelector('p.feedback'),
   };
 
-  const watchedState = onChange(state, render(elements, state));
+  const watchedState = onChange(state, render(elements, state, i18n));
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
     const { value } = elements.input;
-    validate(value, Object.values(watchedState.listSite))
+    validate(value, Object.values(watchedState.subscriptions))
       .then(() => {
         watchedState.form.valid = true;
-        watchedState.listSite.push(value);
-        watchedState.form.error = validate(elements.form.value, watchedState.listSite);
+        watchedState.subscriptions.push(value);
       })
       .catch((error) => {
+        watchedState.error = error.errors;
         watchedState.form.valid = false;
-        watchedState.error = error.message ?? 'defaultError';
       });
   });
 };
