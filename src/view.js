@@ -44,8 +44,7 @@ const renderForm = (elements, state, i18n) => {
 const renderFeeds = (elements, state, i18n) => {
   const { conteiner, ul } = contentBlock(elements.feeds, i18n.t('feeds'));
 
-  state.feeds.forEach((feed) => {
-    const { title, description } = feed;
+  state.feeds.forEach(({ title, description }) => {
     const li = document.createElement('li');
     const h3 = document.createElement('h3');
     const p = document.createElement('p');
@@ -66,8 +65,7 @@ const renderFeeds = (elements, state, i18n) => {
 
 const renderPosts = (elements, state, i18n) => {
   const { conteiner, ul } = contentBlock(elements.posts, i18n.t('posts'));
-  state.posts.forEach((post) => {
-    const { id, title, link } = post;
+  state.posts.forEach(({ id, title, link }) => {
     const li = document.createElement('li');
     const a = document.createElement('a');
     const button = document.createElement('button');

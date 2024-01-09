@@ -55,20 +55,35 @@ export default () => {
 
   const watchedState = onChange(state, render(elements, state, i18n));
 
+  const trackingUpdates = (urls) => {
+    urls.forEach((url) => {
+      getResponse(url)
+        .then((content) => {
+          const { posts } = parser(content);
+          posts
+            .filter((post) => !state.posts.find((statePost) => statePost.link === post.link))
+            .forEach((post) => { watchedState.posts.push({ id: uniqueId(), ...post }); });
+        });
+    });
+    setTimeout(() => trackingUpdates(state.subscriptions), 5000);
+  };
+
+  trackingUpdates(state.subscriptions);
+
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
     const { value } = elements.input;
     validate(value, Object.values(watchedState.subscriptions))
       .then(() => getResponse(value))
       .then((response) => {
+        const { title, description, posts } = parser(response);
+        posts.forEach((post) => { watchedState.posts.push({ id: uniqueId(), ...post }); });
         watchedState.valid = 'valid';
         watchedState.subscriptions.push(value);
-        const { title, description, posts } = parser(response);
         watchedState.feeds.push({ title, description });
-        posts.forEach((post) => { watchedState.posts.push({ id: uniqueId(), ...post }); });
       })
       .catch((error) => {
-        watchedState.error = error.errors;
+        watchedState.error = error.message;
         watchedState.valid = 'error';
       });
   });

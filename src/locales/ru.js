@@ -8,7 +8,7 @@ export default {
     errors: {
       notValid: 'Ссылка должна быть валидным URL',
       alreadyExists: 'RSS уже существует',
-      failParsed: 'Ошибка парсинга данных',
+      failParsed: 'Ошибка сети',
       errorResponse: 'Ошибка запроса',
     },
   },
