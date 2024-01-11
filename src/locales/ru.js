@@ -5,6 +5,7 @@ export default {
     },
     feeds: 'Фиды',
     posts: 'Посты',
+    button: 'Просмотр',
     errors: {
       notValid: 'Ссылка должна быть валидным URL',
       alreadyExists: 'RSS уже существует',

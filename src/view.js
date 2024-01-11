@@ -1,21 +1,6 @@
-const contentBlock = (element, textContent) => {
-  element.textContent = '';
-  const conteiner = document.createElement('div');
-  const conteinerTitle = document.createElement('div');
-  const h2 = document.createElement('h2');
-  const ul = document.createElement('ul');
+import { contentBlock } from './utils.js';
 
-  conteiner.classList.add('card', 'border-0');
-  conteinerTitle.classList.add('card-body');
-  h2.classList.add('card-title', 'h4');
-  h2.textContent = textContent;
-  ul.classList.add('list-group', 'border-0', 'rounded-0');
-
-  element.append(conteiner);
-  conteiner.append(conteinerTitle);
-  conteinerTitle.append(h2);
-  return { conteiner, ul };
-};
+const isViewed = (currentId, { stateUI }) => stateUI.viewedPosts.includes(currentId);
 
 const renderForm = (elements, state, i18n) => {
   const { input, feedback, form } = elements;
@@ -66,13 +51,14 @@ const renderFeeds = (elements, state, i18n) => {
 const renderPosts = (elements, state, i18n) => {
   const { conteiner, ul } = contentBlock(elements.posts, i18n.t('posts'));
   state.posts.forEach(({ id, title, link }) => {
+    const tagACorrectClass = isViewed(id, state) ? 'fw-normal' : 'fw-bold';
     const li = document.createElement('li');
     const a = document.createElement('a');
     const button = document.createElement('button');
 
     li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'lign-items-start', 'border-0', 'border-end-0');
     a.href = link;
-    a.classList.add('fw-bold');
+    a.classList.add(tagACorrectClass);
     a.dataset.id = id;
     a.target = '_blank';
     a.rel = 'noopener noreferrer';
@@ -83,7 +69,7 @@ const renderPosts = (elements, state, i18n) => {
     button.dataset.id = id;
     button.dataset.bsToggle = 'modal';
     button.dataset.bsTarget = '#modal';
-    button.textContent = 'Просмотр';
+    button.textContent = i18n.t('button');
 
     ul.append(li);
     li.append(a);
@@ -98,7 +84,7 @@ const renderModal = ({ posts, currentId }) => {
   const modalTitle = document.querySelector('h5.modal-title');
   const modalDescription = document.querySelector('div.modal-body');
   const modalLink = document.querySelector('a.full-article');
-  const { title, description, link } = posts.find((post) => post.id !== currentId);
+  const { title, description, link } = posts.find((post) => post.id === currentId);
 
   modalTitle.textContent = title;
   modalDescription.textContent = description;
@@ -112,6 +98,7 @@ export default (elements, state, i18n) => (path) => {
     case 'feeds':
       renderFeeds(elements, state, i18n);
       break;
+    case 'stateUI.viewedPosts':
     case 'posts': renderPosts(elements, state, i18n);
       break;
     case 'currentId': renderModal(state);

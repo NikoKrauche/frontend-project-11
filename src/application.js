@@ -4,7 +4,7 @@ import i18n from 'i18next';
 import uniqueId from 'lodash/uniqueId.js';
 import resources from './locales/index.js';
 import render from './view.js';
-import getResponse from './utils.js';
+import { getResponse } from './utils.js';
 import parser from './parser.js';
 
 const validate = (url, subscriptions) => {
@@ -29,6 +29,9 @@ const validate = (url, subscriptions) => {
 
 export default () => {
   const state = {
+    stateUI: {
+      viewedPosts: [],
+    },
     language: 'ru',
     valid: '',
     feeds: [],
@@ -91,5 +94,6 @@ export default () => {
   elements.posts.addEventListener('click', ({ target }) => {
     if (!target.dataset.id) return;
     watchedState.currentId = target.dataset.id;
+    watchedState.stateUI.viewedPosts.push(target.dataset.id);
   });
 };
