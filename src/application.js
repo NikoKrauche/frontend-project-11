@@ -53,7 +53,6 @@ export default () => {
     feedback: document.querySelector('p.feedback'),
     feeds: document.querySelector('div.feeds'),
     posts: document.querySelector('div.posts'),
-    postsBtn: document.querySelector('button[data-bs-target="#modal"]'),
   };
 
   const watchedState = onChange(state, render(elements, state, i18n));
