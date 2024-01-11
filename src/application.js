@@ -14,7 +14,7 @@ const validate = (url, subscriptions) => {
     },
     string: {
       url: 'notValid',
-      min: 'notValid',
+      min: 'notEmpty',
     },
   });
 

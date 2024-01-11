@@ -8,9 +8,13 @@ const getResponse = (url) => {
       disableCache: true,
       url,
     },
-  }).then((response) => response.data.contents)
-    .catch(() => {
-      throw new Error('errorResponse');
+  }).then(({ data }) => {
+    if (data.content_type !== 'application/rss+xml') throw new Error('notRSS');
+
+    return data.contents;
+  })
+    .catch((e) => {
+      throw new Error(e.message);
     });
 };
 

@@ -8,9 +8,10 @@ export default {
     button: 'Просмотр',
     errors: {
       notValid: 'Ссылка должна быть валидным URL',
+      notEmpty: 'Не должно быть пустым',
       alreadyExists: 'RSS уже существует',
       failParsed: 'Ошибка сети',
-      errorResponse: 'Ошибка запроса',
+      notRSS: 'Ресурс не содержит валидный RSS',
     },
   },
 };
