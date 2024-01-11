@@ -9,8 +9,10 @@ const getResponse = (url) => {
       url,
     },
   }).then(({ data }) => {
+    const rssTag = data.contents.includes('<rss');
+
     if (data.status.http_code === 404) throw new Error('error404');
-    if (!data.status.content_type.startsWith('application/rss+xml')) throw new Error('notRSS');
+    if (rssTag === false) throw new Error('notRSS');
     if (data.status.http_code !== 200) throw new Error('networkError');
 
     return data.contents;
