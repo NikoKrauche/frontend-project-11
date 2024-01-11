@@ -8,10 +8,9 @@ const getResponse = (url) => {
       url,
       disableCache: true,
     },
-  }).then(({ data }) => {
-    if (data.status.http_code === 404) throw new Error('error404');
-    if (!data.status.content_type.startsWith('application/rss+xml')) throw new Error('notRSS');
-    if (data.status.http_code !== 200) throw new Error('networkError');
+  }).then(({ data, status }) => {
+    if (status !== 200) throw new Error('networkError');
+    if (data.contents.includes('<rss version="2.0">') !== true) throw new Error('notRSS');
 
     return data.contents;
   });
