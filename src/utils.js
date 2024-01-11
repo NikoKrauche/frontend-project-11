@@ -5,8 +5,8 @@ const getResponse = (url) => {
   return axios({
     url: proxyUrl,
     params: {
-      disableCache: true,
       url,
+      disableCache: true,
     },
   }).then(({ data }) => {
     if (data.status.http_code === 404) throw new Error('error404');
