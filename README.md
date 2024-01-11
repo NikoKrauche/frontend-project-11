@@ -11,7 +11,7 @@ make install
 
 ## Link to app
 
-[![Web App](blob:https://vercel.com/77c4ae8a-131f-4d6b-bfa3-83eb9f8a409b)](https://frontend-project-11-pied-iota.vercel.app/)
+[![Web App](https://lh3.google.com/u/0/d/1ew3NaDT74wwj-j-sJPMZEZCFrG0AlReA=w2560-h1313-iv1)](https://frontend-project-11-pied-iota.vercel.app/)
 
 ***
  [![Hexlet Ltd. logo](https://raw.githubusercontent.com/Hexlet/assets/master/images/hexlet_logo128.png)](https://ru.hexlet.io/u/nikokrauch)
