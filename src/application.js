@@ -1,7 +1,7 @@
 import onChange from 'on-change';
 import * as yup from 'yup';
 import i18n from 'i18next';
-import uniqueId from 'lodash/uniqueId.js';
+import { uniqueId } from 'lodash';
 import resources from './locales/index.js';
 import render from './view.js';
 import { getResponse } from './utils.js';
