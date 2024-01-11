@@ -8,11 +8,13 @@ const getResponse = (url) => {
       url,
       disableCache: true,
     },
-  }).then(({ data, status }) => {
-    if (status !== 200) throw new Error('networkError');
+    timeout: 3000,
+  }).then(({ data }) => {
     if (data.contents.includes('<rss version="2.0">') !== true) throw new Error('notRSS');
 
     return data.contents;
+  }).catch((e) => {
+    throw new Error(e.message);
   });
 };
 
