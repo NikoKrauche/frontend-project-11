@@ -58,15 +58,17 @@ export default () => {
   const watchedState = onChange(state, render(elements, state, i18n));
 
   const trackingUpdates = (urls) => {
-    urls.forEach((url) => {
-      getResponse(url)
-        .then((content) => {
-          const { posts } = parser(content);
-          posts
-            .filter((post) => !state.posts.find((statePost) => statePost.link === post.link))
-            .forEach((post) => { watchedState.posts.push({ id: uniqueId(), ...post }); });
-        });
-    });
+    if (urls.length > 0) {
+      urls.forEach((url) => {
+        getResponse(url)
+          .then((content) => {
+            const { posts } = parser(content);
+            posts
+              .filter((post) => !state.posts.find((statePost) => statePost.link === post.link))
+              .forEach((post) => { watchedState.posts.push({ id: uniqueId(), ...post }); });
+          });
+      });
+    }
     setTimeout(() => trackingUpdates(state.subscriptions), 5000);
   };
 
@@ -79,14 +81,14 @@ export default () => {
       .then(() => getResponse(value))
       .then((response) => {
         const { title, description, posts } = parser(response);
-        posts.forEach((post) => { watchedState.posts.push({ id: uniqueId(), ...post }); });
         watchedState.valid = 'valid';
+        posts.forEach((post) => { watchedState.posts.push({ id: uniqueId(), ...post }); });
         watchedState.subscriptions.push(value);
         watchedState.feeds.push({ title, description });
       })
       .catch((error) => {
-        watchedState.error = error.message;
         watchedState.valid = 'error';
+        watchedState.error = error.message;
       });
   });
 
