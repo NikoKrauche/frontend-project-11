@@ -4,7 +4,8 @@
   "description": "RSS aggregator",
   "type": "module",
   "scripts": {
-    "start": "webpack serve --mode development"
+    "start": "webpack serve --mode development",
+    "test": ""
   },
   "repository": {
     "type": "git",
