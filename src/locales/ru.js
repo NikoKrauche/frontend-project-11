@@ -10,8 +10,10 @@ export default {
       notValid: 'Ссылка должна быть валидным URL',
       notEmpty: 'Не должно быть пустым',
       alreadyExists: 'RSS уже существует',
-      failParsed: 'Ошибка сети',
+      networkError: 'Ошибка сети',
+      error404: 'Страница не найдена',
       notRSS: 'Ресурс не содержит валидный RSS',
+      failParsed: 'Ошибка полученных данных',
     },
   },
 };

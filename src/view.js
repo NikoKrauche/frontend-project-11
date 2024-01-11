@@ -19,10 +19,9 @@ const renderForm = (elements, state, i18n) => {
       feedback.classList.add('text-danger');
       feedback.classList.remove('text-success');
       feedback.textContent = i18n.t(`errors.${error}`);
-      console.log(state.error);
       break;
     default:
-      throw new Error(`Incorrect key status: '${valid}'`);
+      throw new Error(`Unknown state: '${valid}'`);
   }
 };
 
@@ -93,10 +92,10 @@ const renderModal = ({ posts, currentId }) => {
 
 export default (elements, state, i18n) => (path) => {
   switch (path) {
+    case 'error':
     case 'valid': renderForm(elements, state, i18n);
       break;
-    case 'feeds':
-      renderFeeds(elements, state, i18n);
+    case 'feeds': renderFeeds(elements, state, i18n);
       break;
     case 'stateUI.viewedPosts':
     case 'posts': renderPosts(elements, state, i18n);

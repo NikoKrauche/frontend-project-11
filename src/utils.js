@@ -9,13 +9,12 @@ const getResponse = (url) => {
       url,
     },
   }).then(({ data }) => {
-    if (data.content_type !== 'application/rss+xml') throw new Error('notRSS');
+    if (data.status.http_code === 404) throw new Error('error404');
+    if (!data.status.content_type.startsWith('application/rss+xml')) throw new Error('notRSS');
+    if (data.status.http_code !== 200) throw new Error('networkError');
 
     return data.contents;
-  })
-    .catch((e) => {
-      throw new Error(e.message);
-    });
+  });
 };
 
 const contentBlock = (element, text) => {

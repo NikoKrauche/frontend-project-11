@@ -1,5 +1,5 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import miniCssExtractPlugin from 'mini-css-extract-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
 export default {
   mode: process.env.NODE_ENV || 'development',
@@ -19,7 +19,7 @@ export default {
         test: /\.scss$/,
         use: [
           {
-            loader: miniCssExtractPlugin.loader,
+            loader: MiniCssExtractPlugin.loader,
           },
           {
             loader: 'css-loader',
@@ -35,7 +35,7 @@ export default {
     new HtmlWebpackPlugin({
       template: 'index.html',
     }),
-    new miniCssExtractPlugin(),
+    new MiniCssExtractPlugin(),
   ],
   output: {
     clean: true,
