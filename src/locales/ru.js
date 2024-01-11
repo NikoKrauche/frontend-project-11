@@ -10,7 +10,7 @@ export default {
       notValid: 'Ссылка должна быть валидным URL',
       notEmpty: 'Не должно быть пустым',
       alreadyExists: 'RSS уже существует',
-      ECONNABORTED: 'Ошибка сети',
+      ERR_NETWORK: 'Ошибка сети',
       notRSS: 'Ресурс не содержит валидный RSS',
     },
   },
