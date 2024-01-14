@@ -1,7 +1,8 @@
 export default {
   translation: {
     feedback: {
-      valid: 'RSS успешно загружен',
+      finished: 'RSS успешно загружен',
+      processing: 'Идёт загрузка',
     },
     feeds: 'Фиды',
     posts: 'Посты',
@@ -10,7 +11,7 @@ export default {
       notValid: 'Ссылка должна быть валидным URL',
       notEmpty: 'Не должно быть пустым',
       alreadyExists: 'RSS уже существует',
-      'Network Error': 'Ошибка сети',
+      networkError: 'Ошибка сети',
       notRSS: 'Ресурс не содержит валидный RSS',
     },
   },

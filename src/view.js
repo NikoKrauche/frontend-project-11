@@ -1,32 +1,45 @@
 import { contentBlock } from './utils.js';
 
-const isViewed = (currentId, { stateUI }) => stateUI.viewedPosts.includes(currentId);
+const isViewed = (currentId, { viewedPosts }) => viewedPosts.includes(currentId);
 
-const renderForm = (elements, state, i18n) => {
-  const { input, feedback, form } = elements;
-  const { error, valid } = state;
-  switch (valid) {
-    case 'valid':
+const renderForm = (elements, { error, submittingState }, i18n) => {
+  const {
+    input, button, feedback, form,
+  } = elements;
+
+  switch (submittingState) {
+    case 'processing':
+      input.disabled = true;
+      button.disabled = true;
+      feedback.classList.remove('text-danger');
+      feedback.classList.remove('text-success');
+      feedback.textContent = i18n.t('feedback.processing');
+      break;
+    case 'finished':
+      input.disabled = false;
+      button.disabled = false;
       input.classList.remove('is-invalid');
       feedback.classList.remove('text-danger');
       feedback.classList.add('text-success');
-      feedback.textContent = i18n.t('feedback.valid');
+      feedback.textContent = i18n.t('feedback.finished');
       form.reset();
       form.focus();
       break;
-    case 'error':
+    case 'failed':
+      input.disabled = false;
+      button.disabled = false;
       input.classList.add('is-invalid');
       feedback.classList.add('text-danger');
       feedback.classList.remove('text-success');
       feedback.textContent = i18n.t(`errors.${error}`);
       break;
     default:
-      throw new Error(`Unknown state: '${valid}'`);
+      throw new Error(`Unknown state: '${submittingState}'`);
   }
 };
 
 const renderFeeds = (elements, state, i18n) => {
-  const { conteiner, ul } = contentBlock(elements.feeds, i18n.t('feeds'));
+  const { container, ul } = contentBlock(elements.feeds, i18n.t('feeds'));
 
   state.feeds.forEach(({ title, description }) => {
     const li = document.createElement('li');
@@ -44,18 +57,18 @@ const renderFeeds = (elements, state, i18n) => {
     li.append(p);
   });
 
-  conteiner.append(ul);
+  container.append(ul);
 };
 
-const renderPosts = (elements, state, i18n) => {
-  const { conteiner, ul } = contentBlock(elements.posts, i18n.t('posts'));
-  state.posts.forEach(({ id, title, link }) => {
-    const tagACorrectClass = isViewed(id, state) ? 'fw-normal' : 'fw-bold';
+const renderPosts = (elements, { posts, stateUI }, i18n) => {
+  const { container, ul } = contentBlock(elements.posts, i18n.t('posts'));
+  posts.forEach(({ id, title, link }) => {
+    const tagACorrectClass = isViewed(id, stateUI) ? 'fw-normal' : 'fw-bold';
     const li = document.createElement('li');
     const a = document.createElement('a');
     const button = document.createElement('button');
 
-    li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'lign-items-start', 'border-0', 'border-end-0');
+    li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
     a.href = link;
     a.classList.add(tagACorrectClass);
     a.dataset.id = id;
@@ -76,14 +89,15 @@ const renderPosts = (elements, state, i18n) => {
     return ul;
   });
 
-  conteiner.append(ul);
+  container.append(ul);
 };
 
-const renderModal = ({ posts, currentId }) => {
+const renderModal = ({ posts, stateUI }) => {
+  const { lastViewedPostId } = stateUI;
   const modalTitle = document.querySelector('h5.modal-title');
   const modalDescription = document.querySelector('div.modal-body');
   const modalLink = document.querySelector('a.full-article');
-  const { title, description, link } = posts.find((post) => post.id === currentId);
+  const { title, description, link } = posts.find((post) => post.id === lastViewedPostId);
 
   modalTitle.textContent = title;
   modalDescription.textContent = description;
@@ -92,15 +106,15 @@ const renderModal = ({ posts, currentId }) => {
 
 export default (elements, state, i18n) => (path) => {
   switch (path) {
-    case 'error':
-    case 'valid': renderForm(elements, state, i18n);
+    case 'form.error':
+    case 'form.submittingState': renderForm(elements, state.form, i18n);
       break;
     case 'feeds': renderFeeds(elements, state, i18n);
       break;
     case 'stateUI.viewedPosts':
     case 'posts': renderPosts(elements, state, i18n);
       break;
-    case 'currentId': renderModal(state);
+    case 'stateUI.lastViewedPostId': renderModal(state);
       break;
     default:
       break;
