@@ -4,43 +4,63 @@ import i18n from 'i18next';
 import { uniqueId } from 'lodash';
 import resources from './locales/index.js';
 import render from './view.js';
-import { getResponse } from './utils.js';
-import parser from './parser.js';
+import getResponse from './getResponse.js';
+import parse from './parser.js';
 
-yup.setLocale({
-  mixed: {
-    notOneOf: 'alreadyExists',
-  },
-  string: {
-    url: 'notValid',
-    min: 'notEmpty',
-  },
-});
-
-const validate = (url, subscriptions) => {
+const validate = (url, urls) => {
   const schema = yup
     .string()
     .min(1)
     .trim()
     .url()
-    .notOneOf(subscriptions);
+    .notOneOf(urls);
   return schema.validate(url);
 };
 
+const trackingUpdates = (state, watchedState) => {
+  const urls = state.feeds.map(({ link }) => link);
+  const promises = urls.map((url) => getResponse(url));
+  const promise = Promise.all(promises);
+
+  promise.then((contents) => {
+    contents.forEach((content) => {
+      const { posts } = parse(content);
+      posts
+        .filter((post) => !state.posts
+          .find((statePost) => statePost.link === post.link))
+        .forEach((post) => { watchedState.posts.push({ id: uniqueId(), ...post }); });
+    });
+  });
+  setTimeout(() => trackingUpdates(state, watchedState), 5000);
+};
+
 export default () => {
+  yup.setLocale({
+    mixed: {
+      notOneOf: 'alreadyExists',
+    },
+    string: {
+      url: 'notValid',
+      min: 'notEmpty',
+    },
+  });
+
   const state = {
     language: 'ru',
     stateUI: {
       viewedPosts: [],
-      lastViewedPostId: null,
+      currentViewedPostId: null,
     },
     form: {
+      validationState: null,
       submittingState: 'filling',
-      error: null,
     },
     feeds: [],
     posts: [],
-    subscriptions: [],
+    error: {
+      type: null,
+      data: null,
+    },
   };
 
   const elements = {
@@ -59,48 +79,48 @@ export default () => {
     debug: false,
     resources,
   }).then(() => {
-    const trackingUpdates = (urls) => {
-      if (urls.length > 0) {
-        const promises = urls.map((url) => getResponse(url));
-        const promise = Promise.all(promises);
-
-        promise.then((contents) => {
-          contents.forEach((content) => {
-            const { posts } = parser(content);
-            posts
-              .filter((post) => !state.posts
-                .find((statePost) => statePost.link === post.link))
-              .forEach((post) => { watchedState.posts.push({ id: uniqueId(), ...post }); });
-          });
-        });
-      }
-      setTimeout(() => trackingUpdates(state.subscriptions), 5000);
-    };
-
-    trackingUpdates(state.subscriptions);
+    trackingUpdates(state, watchedState);
 
     elements.form.addEventListener('submit', (e) => {
       e.preventDefault();
-      watchedState.form.submittingState = 'processing';
       const { value } = elements.input;
-      validate(value, Object.values(watchedState.subscriptions))
-        .then(() => getResponse(value))
+      watchedState.form.submittingState = 'processing';
+      validate(value, state.feeds.map(({ link }) => link))
+        .then(() => {
+          watchedState.form.validationState = true;
+          watchedState.form.submittingState = 'waitingResponse';
+          return getResponse(value);
+        })
         .then((response) => {
-          const { title, description, posts } = parser(response);
+          const { title, description, posts } = parse(response);
           watchedState.form.submittingState = 'finished';
-          posts.forEach((post) => { watchedState.posts.push({ id: uniqueId(), ...post }); });
-          watchedState.subscriptions.push(value);
-          watchedState.feeds.push({ title, description });
+          posts.map((post) => watchedState.posts.push({ id: uniqueId(), ...post }));
+          watchedState.feeds.push({ title, description, link: value });
         })
         .catch((error) => {
+          switch (error.name) {
+            case 'ValidationError':
+              watchedState.error.type = error.message;
+              watchedState.error.data = error;
+              watchedState.form.validationState = false;
+              break;
+            case 'isAxiosError':
+              watchedState.error.type = 'networkError';
+              watchedState.error.data = error;
+              break;
+            case 'parseError':
+              watchedState.error.type = 'notRSS';
+              watchedState.error.data = error;
+              break;
+            default: throw error;
+          }
           watchedState.form.submittingState = 'failed';
-          watchedState.form.error = error.message;
         });
     });
 
     elements.posts.addEventListener('click', ({ target }) => {
       if (!target.dataset.id) return;
-      watchedState.stateUI.lastViewedPostId = target.dataset.id;
+      watchedState.stateUI.currentViewedPostId = target.dataset.id;
       watchedState.stateUI.viewedPosts.push(target.dataset.id);
     });
   });

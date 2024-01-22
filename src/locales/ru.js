@@ -2,7 +2,7 @@ export default {
   translation: {
     feedback: {
       finished: 'RSS успешно загружен',
-      processing: 'Идёт загрузка',
+      processing: 'Обработка запроса',
     },
     feeds: 'Фиды',
     posts: 'Посты',

@@ -1,9 +1,13 @@
 export default (data) => {
-  const parser = new DOMParser();
-  const rawData = parser.parseFromString(data, 'application/xml');
-  const error = rawData.querySelector('parsererror');
+  const parse = new DOMParser();
+  const rawData = parse.parseFromString(data, 'application/xml');
+  const parseError = rawData.querySelector('parsererror');
 
-  if (error) throw new Error('notRSS');
+  if (parseError) {
+    const error = new Error(parseError.textContent);
+    error.name = 'parseError';
+    throw error;
+  }
 
   const title = rawData.querySelector('title').textContent;
   const description = rawData.querySelector('description').textContent;
