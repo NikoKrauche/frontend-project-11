@@ -104,7 +104,7 @@ export default () => {
               watchedState.error.data = error;
               watchedState.form.validationState = false;
               break;
-            case 'isAxiosError':
+            case 'AxiosError':
               watchedState.error.type = 'networkError';
               watchedState.error.data = error;
               break;

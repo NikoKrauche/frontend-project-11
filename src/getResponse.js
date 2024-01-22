@@ -8,6 +8,6 @@ export default (url) => {
       url,
       disableCache: true,
     },
-    timeout: 3500,
+    timeout: 3000,
   }).then(({ data }) => data.contents);
 };
